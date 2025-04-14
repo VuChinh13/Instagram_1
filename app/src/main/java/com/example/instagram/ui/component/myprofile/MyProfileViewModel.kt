@@ -1,0 +1,38 @@
+package com.example.instagram.ui.component.myprofile
+
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.instagram.data.model.InforUserResponse
+import com.example.instagram.data.model.PostResponse
+import com.example.instagram.data.repository.AuthRepository
+import kotlinx.coroutines.launch
+
+
+class MyProfileViewModel : ViewModel() {
+    private val authRepository = AuthRepository()
+
+    // LiveData để lưu trữ kết quả trả về từ Server
+    private val _getInforUserResult = MutableLiveData<InforUserResponse?>()
+    val getInforUserResult: LiveData<InforUserResponse?> = _getInforUserResult
+
+    private val _getUserPostsResult = MutableLiveData<PostResponse?>()
+    val getUserPostsResult: LiveData<PostResponse?> = _getUserPostsResult
+
+
+    fun getInforUser(username: String) {
+        viewModelScope.launch {
+            val result = authRepository.getInforUser(username)
+            _getInforUserResult.postValue(result)
+        }
+    }
+
+    fun getUserPosts(username: String) {
+        viewModelScope.launch {
+            val result = authRepository.getUserPosts(username)
+            _getUserPostsResult.postValue(result)
+        }
+    }
+}
