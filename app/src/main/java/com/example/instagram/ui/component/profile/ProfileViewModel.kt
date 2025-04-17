@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.instagram.data.model.InforUserResponse
 import com.example.instagram.data.model.PostResponse
 import com.example.instagram.data.repository.AuthRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ProfileViewModel : ViewModel() {
@@ -22,14 +23,14 @@ class ProfileViewModel : ViewModel() {
 
 
     fun getInforUser(username: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val result = authRepository.getInforUser(username)
             _getInforUserResult.postValue(result)
         }
     }
 
     fun getUserPosts(username: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO){
             val result = authRepository.getUserPosts(username)
             _getUserPostsResult.postValue(result)
         }

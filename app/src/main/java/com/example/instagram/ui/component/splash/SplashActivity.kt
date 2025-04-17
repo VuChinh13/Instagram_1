@@ -11,7 +11,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.instagram.R
 import com.example.instagram.ui.component.auth.AuthActivity
-import com.example.instagram.ui.component.home.HomeActivity
 import com.example.instagram.ui.component.main.MainActivity
 
 class SplashActivity : AppCompatActivity() {

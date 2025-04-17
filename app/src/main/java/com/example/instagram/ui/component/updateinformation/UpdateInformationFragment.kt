@@ -3,17 +3,18 @@ package com.example.instagram.ui.component.updateinformation
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.example.instagram.R
-import com.example.instagram.databinding.ActivityUpdateInformationBinding
+import com.example.instagram.databinding.FragmentUpdateInformationBinding
 import com.example.instagram.ui.component.myprofile.EXTRA_ADDRESS
 import com.example.instagram.ui.component.myprofile.EXTRA_AVATAR
 import com.example.instagram.ui.component.myprofile.EXTRA_GENDER
@@ -22,35 +23,48 @@ import com.example.instagram.ui.component.myprofile.EXTRA_NAME
 import java.io.File
 import java.io.FileOutputStream
 
-class UpdateInformationActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityUpdateInformationBinding
+class UpdateInformationFragment : Fragment() {
+    private var name: String? = ""
+    private var gender: String? = "Other"
+    private var avatar: String? = ""
+    private var introduce: String? = ""
+    private var address: String? = ""
+    private lateinit var binding: FragmentUpdateInformationBinding
     private var selectedImageUri: Uri? = null
     private val updateInformationViewModel: UpdateInformationViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        binding = ActivityUpdateInformationBinding.inflate(layoutInflater)
-        setContentView(binding.root)
 
-        val name: String = intent.getStringExtra(EXTRA_NAME) ?: ""
-        val introduce: String = intent.getStringExtra(EXTRA_INTRODUCE) ?: ""
-        val gender: String = intent.getStringExtra(EXTRA_GENDER) ?: "Other"
-        val avatar: String = intent.getStringExtra(EXTRA_AVATAR) ?: ""
-        val address: String = intent.getStringExtra(EXTRA_ADDRESS) ?: ""
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        // Lấy dữ liệu từ Bundle (Arguments)
+        arguments?.let {
+            name = it.getString(EXTRA_NAME)
+            gender = it.getString(EXTRA_GENDER)
+            avatar = it.getString(EXTRA_AVATAR)
+            introduce = it.getString(EXTRA_INTRODUCE)
+            address = it.getString(EXTRA_ADDRESS)
+        }
 
+        binding = FragmentUpdateInformationBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         binding.etName.append(name)
         binding.etIntroduce.append(introduce)
         binding.etAddress.append(address)
 
-        if (avatar.isEmpty()) {
+        if (avatar?.isEmpty() == true) {
             binding.ivAvatar.setImageResource(R.drawable.ic_avatar)
-        } else Glide.with(this).load(avatar).into(binding.ivAvatar)
+        } else Glide.with(this).load(avatar).error(R.drawable.ic_avatar).into(binding.ivAvatar)
 
         // trường hợp nếu mà giới tính là null thì để là khác
         val items = listOf("Nam", "Nữ", "Khác")
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, items)
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, items)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerGender.adapter = adapter
         if (gender.equals("Khác")) {
@@ -61,13 +75,13 @@ class UpdateInformationActivity : AppCompatActivity() {
         } else binding.spinnerGender.setSelection(1)
 
         // Lấy dữ liệu trong SharedPreferences
-        val sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+        val sharedPreferences = requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
         val userId = sharedPreferences.getString("_id", "") ?: ""
 
-        updateInformationViewModel.updateInforResult.observe(this) { result ->
+        updateInformationViewModel.updateInforResult.observe(viewLifecycleOwner) { result ->
             if (result != null) {
                 // Thay đổi thông tin người dùng thành công
-                val sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+                val sharedPreferences = requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
                 val editor = sharedPreferences.edit()
                 editor.putString("username", result.data.username)
                 editor.putString("password", result.data.password)
@@ -77,13 +91,13 @@ class UpdateInformationActivity : AppCompatActivity() {
                 editor.putString("address", result.data.address)
                 editor.putString("introduce", result.data.introduce)
                 Toast.makeText(
-                    this,
+                    requireActivity(),
                     "Updated information successfully",
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
                 Toast.makeText(
-                    this,
+                    requireActivity(),
                     " Error, please check the information again!",
                     Toast.LENGTH_SHORT
                 ).show()
@@ -103,42 +117,44 @@ class UpdateInformationActivity : AppCompatActivity() {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
         binding.ivBackArrow.setOnClickListener {
-            finish()
+            parentFragmentManager.popBackStack()
         }
         binding.btSaveChanges.setOnClickListener {
-                val avatarFile = selectedImageUri?.let {
-                    uriToFile(
-                        this,
-                        it
-                    )
-                } // Chuyển uri thành File nếu mà có ảnh mới
-                if (binding.etOldPassword.text.toString().isEmpty() && binding.etNewPassword.text.toString().isEmpty()){
-                    // nếu mà 2 trường này mà trống thì truyền null
-                    updateInformationViewModel.updateInformation(
-                       null,
-                        null,
-                        binding.etName.text.toString().trim(),
-                        avatarFile,
-                        binding.spinnerGender.selectedItem.toString().trim(),
-                        binding.etAddress.text.toString().trim(),
-                        binding.etIntroduce.text.toString().trim(),
-                        userId
-                    )
-                } else {
-                    updateInformationViewModel.updateInformation(
-                        binding.etOldPassword.text.toString().trim(),
-                        binding.etNewPassword.text.toString().trim(),
-                        binding.etName.text.toString().trim(),
-                        avatarFile,
-                        binding.spinnerGender.selectedItem.toString().trim(),
-                        binding.etAddress.text.toString().trim(),
-                        binding.etIntroduce.text.toString().trim(),
-                        userId
-                    )
-                }
+            val avatarFile = selectedImageUri?.let {
+                uriToFile(
+                    requireContext(),
+                    it
+                )
+            } // Chuyển uri thành File nếu mà có ảnh mới
+            if (binding.etOldPassword.text.toString()
+                    .isEmpty() && binding.etNewPassword.text.toString().isEmpty()
+            ) {
+                // nếu mà 2 trường này mà trống thì truyền null
+                updateInformationViewModel.updateInformation(
+                    null,
+                    null,
+                    binding.etName.text.toString().trim(),
+                    avatarFile,
+                    binding.spinnerGender.selectedItem.toString().trim(),
+                    binding.etAddress.text.toString().trim(),
+                    binding.etIntroduce.text.toString().trim(),
+                    userId
+                )
+            } else {
+                updateInformationViewModel.updateInformation(
+                    binding.etOldPassword.text.toString().trim(),
+                    binding.etNewPassword.text.toString().trim(),
+                    binding.etName.text.toString().trim(),
+                    avatarFile,
+                    binding.spinnerGender.selectedItem.toString().trim(),
+                    binding.etAddress.text.toString().trim(),
+                    binding.etIntroduce.text.toString().trim(),
+                    userId
+                )
             }
         }
 
+    }
 
     // Hàm dùng để chuyển uri thành 1 đối tượng là File
     private fun uriToFile(context: Context, uri: Uri): File {
@@ -152,4 +168,5 @@ class UpdateInformationActivity : AppCompatActivity() {
         outputStream.close()
         return file
     }
+
 }

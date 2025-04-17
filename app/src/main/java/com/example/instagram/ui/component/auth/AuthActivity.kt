@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.instagram.R
 import com.example.instagram.databinding.ActivityAuthBinding
-import com.example.instagram.ui.component.home.HomeActivity
+import com.example.instagram.ui.component.main.MainActivity
 import com.example.instagram.ui.component.signup.SignupActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -64,7 +64,7 @@ class AuthActivity : AppCompatActivity() {
 
                 lifecycleScope.launch {
                     delay(1000)
-                    startActivity(Intent(this@AuthActivity, HomeActivity::class.java))
+                    startActivity(Intent(this@AuthActivity, MainActivity::class.java))
                     finish() // Đóng SplashActivity
                 }
             } else {

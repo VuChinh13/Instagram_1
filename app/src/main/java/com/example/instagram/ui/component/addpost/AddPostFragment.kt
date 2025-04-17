@@ -3,32 +3,42 @@ package com.example.instagram.ui.component.addpost
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import com.example.instagram.databinding.ActivityAddPostBinding
+import androidx.fragment.app.viewModels
+import com.example.instagram.databinding.FragmentAddPostBinding
 import java.io.File
 import java.io.FileOutputStream
 
-class AddPostActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityAddPostBinding
+class AddPostFragment : Fragment() {
     private val postImages: MutableList<File> = mutableListOf()
     private val addPostViewModel: AddPostViewModel by viewModels()
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        binding = ActivityAddPostBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    private lateinit var binding: FragmentAddPostBinding
+
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        // Inflate the layout for this fragment
+        binding = FragmentAddPostBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         val pickMultipleMedia =
             registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(5)) { uris ->
                 if (uris.isNotEmpty()) {
                     uris.forEach { uri ->
                         binding.ivPostImage.setImageURI(uri)
-                        postImages.add(uriToFile(this, uri))
+                        postImages.add(uriToFile(requireContext(), uri))
                     }
                 }
             }
@@ -38,23 +48,24 @@ class AddPostActivity : AppCompatActivity() {
         }
 
         binding.ivClose.setOnClickListener {
-            finish()
+           parentFragmentManager.popBackStack()
         }
 
-        addPostViewModel.getPostResponse.observe(this) { result ->
+        addPostViewModel.getPostResponse.observe(viewLifecycleOwner) { result ->
             if (result != null) {
                 // Nếu mà thành công
-                Toast.makeText(this, "Đã chia sẻ thành công bài viết", Toast.LENGTH_SHORT)
+                Toast.makeText(requireContext(), "Đã chia sẻ thành công bài viết", Toast.LENGTH_SHORT)
                     .show()
-                finish()
-            } else Toast.makeText(this, "Đã có lỗi xảy ra hãy kiểm tra lại", Toast.LENGTH_SHORT).show()
+                parentFragmentManager.popBackStack()
+            } else Toast.makeText(requireContext(), "Đã có lỗi xảy ra hãy kiểm tra lại", Toast.LENGTH_SHORT)
+                .show()
         }
 
         binding.btShare.setOnClickListener {
             if (binding.etContent.text.isEmpty()) {
-                Toast.makeText(this, "Hãy nhập nội dung bài viết", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Hãy nhập nội dung bài viết", Toast.LENGTH_SHORT).show()
             } else {
-                val sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+                val sharedPreferences = requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
                 val userId = sharedPreferences.getString("_id", "") ?: ""
                 addPostViewModel.addPost(userId, binding.etContent.text.toString(), postImages)
             }

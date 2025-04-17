@@ -3,10 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
+    android:background="@color/white"
     android:fitsSystemWindows="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.component.profile.ProfileActivity">
+    tools:context=".ui.component.myprofile.MyProfileActivity">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -19,34 +20,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0">
-
-
-
-        <ImageView
-            android:id="@+id/iv_camera"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_introduce"
-            app:srcCompat="@drawable/ic_post" />
-
-
-        <TextView
-            android:id="@+id/tv_title_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:fontFamily="sans-serif-medium"
-            android:text="Chưa có bài viết"
-            android:textColor="@color/black"
-            android:textSize="21sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/iv_camera" />
-
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -81,13 +54,60 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <TextView
+            android:id="@+id/tv_title_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="Hãy tạo bài viết đầu tiên của bạn"
+            android:textColor="#0064E0"
+            app:layout_constraintEnd_toEndOf="@+id/tv_title_1"
+            app:layout_constraintStart_toStartOf="@+id/tv_title_1"
+            app:layout_constraintTop_toBottomOf="@+id/tv_title_1" />
+
+        <ImageView
+            android:id="@+id/iv_logout"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="20dp"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_update_infor"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/iv_update_infor"
+            app:srcCompat="@drawable/ic_logout" />
+
+        <ImageView
+            android:id="@+id/iv_update_infor"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="20dp"
+            android:scaleType="fitXY"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_username"
+            app:layout_constraintEnd_toStartOf="@+id/iv_logout"
+            app:layout_constraintTop_toTopOf="@+id/tv_username"
+            app:srcCompat="@drawable/ic_user_setting" />
+
+        <TextView
+            android:id="@+id/tv_title_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ghi lại khoảng khắc với bạn bè"
+            android:textSize="21sp"
+            android:textColor="@color/black"
+            android:fontFamily="sans-serif-medium"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_introduce" />
+
 
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_post"
+            android:id="@+id/rv_my_post"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -99,7 +119,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="13dp"
             android:fontFamily="sans-serif-medium"
-            app:layout_constraintStart_toStartOf="@+id/constraint1"
+            app:layout_constraintStart_toStartOf="@+id/tv_username"
             app:layout_constraintTop_toBottomOf="@+id/constraint1" />
 
 
@@ -130,7 +150,7 @@
             android:id="@+id/tv_total_post"
             android:layout_width="60dp"
             android:layout_height="23dp"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="50dp"
             android:fontFamily="sans-serif-medium"
             android:text="0"
             app:layout_constraintBottom_toBottomOf="@+id/cardView"
@@ -141,15 +161,15 @@
             android:id="@+id/tv_username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
             android:fontFamily="sans-serif-medium"
             android:text="Username"
             android:textColor="@color/black"
             android:textSize="23sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_back_arrow"
-            app:layout_constraintStart_toEndOf="@+id/iv_back_arrow"
-            app:layout_constraintTop_toTopOf="@+id/iv_back_arrow" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView"
@@ -157,8 +177,8 @@
             android:layout_height="60dp"
             android:layout_marginTop="20dp"
             app:cardCornerRadius="35dp"
-            android:layout_marginLeft="20dp"
-            app:layout_constraintStart_toStartOf="@+id/iv_back_arrow"
+            app:layout_constraintEnd_toEndOf="@+id/tv_username"
+            app:layout_constraintStart_toStartOf="@+id/tv_username"
             app:layout_constraintTop_toBottomOf="@id/tv_username">
 
             <ImageView
@@ -171,15 +191,6 @@
                 tools:srcCompat="@tools:sample/avatars" />
         </androidx.cardview.widget.CardView>
 
-        <ImageView
-            android:id="@+id/iv_back_arrow"
-            android:layout_width="25dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="15dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_backarrow" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

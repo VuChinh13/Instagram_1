@@ -2,38 +2,44 @@ package com.example.instagram.ui.component.profile
 
 import android.content.Context
 import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.instagram.R
-import com.example.instagram.databinding.ActivityProfileBinding
+import com.example.instagram.databinding.FragmentProfileBinding
 import com.example.instagram.ui.component.home.adapter.EXTRA_USER_NAME
 import com.example.instagram.ui.component.profile.adapter.ProfileAdapter
 
 
-class ProfileActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityProfileBinding
+class ProfileFragment : Fragment() {
+    private lateinit var binding: FragmentProfileBinding
     private val myProfileViewModel: ProfileViewModel by viewModels()
     private lateinit var postAdapter: ProfileAdapter
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        binding = ActivityProfileBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentProfileBinding.inflate(layoutInflater,container,false)
+        return binding.root
+    }
 
-        val userName: String = intent.getStringExtra(EXTRA_USER_NAME) ?: ""
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        val userName = arguments?.getString(EXTRA_USER_NAME).toString()
 
         // lấy thông tin từ trên Server
         myProfileViewModel.getInforUser(userName)
         myProfileViewModel.getUserPosts(userName)
 
 
-        myProfileViewModel.getUserPostsResult.observe(this) { result ->
+        myProfileViewModel.getUserPostsResult.observe(viewLifecycleOwner) { result ->
             if (result != null) {
                 if (result.data.data.isEmpty()) {
                     binding.tvTitle1.visibility = View.VISIBLE
@@ -42,21 +48,28 @@ class ProfileActivity : AppCompatActivity() {
                     binding.tvTitle1.visibility = View.GONE
                     binding.ivCamera.visibility = View.GONE
 
-                    val sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+                    val sharedPreferences = requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
                     val userId = sharedPreferences.getString("_id", "") ?: ""
                     val myUserName = sharedPreferences.getString("username", "") ?: ""
 
-                    postAdapter = ProfileAdapter(this, result.data.data, myUserName, userId)
+                    postAdapter = ProfileAdapter(requireContext(), result.data.data, myUserName, userId)
                     binding.rvPost.layoutManager = LinearLayoutManager(
-                        this,
+                        requireContext(),
                         LinearLayoutManager.VERTICAL, false
                     )
+                    val itemAnimator = DefaultItemAnimator().apply {
+                        addDuration = 400  // Thời gian thêm item
+                        removeDuration = 400  // Thời gian xóa item
+                        moveDuration = 400  // Thời gian di chuyển item
+                        changeDuration = 400  // Thời gian thay đổi item
+                    }
+                    binding.rvPost.itemAnimator = itemAnimator
                     binding.rvPost.adapter = postAdapter
                 }
             }
         }
 
-        myProfileViewModel.getInforUserResult.observe(this) { result ->
+        myProfileViewModel.getInforUserResult.observe(viewLifecycleOwner) { result ->
             if (result != null) {
                 Glide.with(this).load(result.data.avatar)
                     .error(R.drawable.ic_avatar)
@@ -68,16 +81,15 @@ class ProfileActivity : AppCompatActivity() {
                 binding.tvUsernameThread.text = result.data.username
             } else {
                 Toast.makeText(
-                    this,
-                    "Đã xảy ra lỗi, hãy kiểm tra lại",
+                    requireContext(),
+                    "Đã xảy ra lỗi, hãy kiểm tra lại1",
                     Toast.LENGTH_SHORT
-                )
-                    .show()
+                ).show()
             }
         }
 
         binding.ivBackArrow.setOnClickListener {
-            finish()
+            parentFragmentManager.popBackStack()
         }
     }
 }

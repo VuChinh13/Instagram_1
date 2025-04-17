@@ -24,7 +24,6 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-
 const val EXTRA_POST_CONTENT = "extra_post_content"
 const val EXTRA_POST_IMAGE = "extra_post_image"
 const val EXTRA_POST_ID = "extra_post_id"
@@ -112,7 +111,6 @@ class MyPostAdapter(
                 }
             }
         }
-
 
         // Chỉ inflate menu nếu nó chưa được thêm
         if (holder.toolbar.menu.size() == 0) {

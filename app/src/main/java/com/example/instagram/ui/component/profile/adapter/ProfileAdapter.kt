@@ -16,7 +16,6 @@ import com.example.instagram.data.model.Post
 import com.example.instagram.data.repository.AuthRepository
 import com.example.instagram.ui.component.home.adapter.EXTRA_USER_NAME
 import com.example.instagram.ui.component.home.adapter.ImagePagerAdapter
-import com.example.instagram.ui.component.profile.ProfileActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
