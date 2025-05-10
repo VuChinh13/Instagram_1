@@ -11,7 +11,7 @@ data class AddPostRequest(
 data class LikePostRequest(
     val userId: String,
     val postId: String,
-    val likeValue: Int // 1 để tym, -1 để bỏ tym
+    val likeValue: Int 
 )
 
 data class LikePostResponse(
