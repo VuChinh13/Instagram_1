@@ -86,7 +86,7 @@ class AuthRepository {
     ): InforUserResponse? {
         return try {
             val avatarPart = avatar?.let {
-                val mimeType = "image/jpeg" // Thay đổi tùy theo loại file
+                val mimeType = "image/jpeg" 
                 val requestFile = it.asRequestBody(mimeType.toMediaTypeOrNull())
 
                 // Đảm bảo tên file có phần mở rộng hợp lệ
@@ -116,14 +116,13 @@ class AuthRepository {
     suspend fun addPost(
         userId: String,
         content: String,
-        images: List<File>? // Chấp nhận danh sách File ảnh
+        images: List<File>?
     ): PostResponse? {
         return try {
-            // Chuyển userId & content thành RequestBody
+          
             val userIdBody = userId.toRequestBody("text/plain".toMediaTypeOrNull())
             val contentBody = content.toRequestBody("text/plain".toMediaTypeOrNull())
 
-            // Chuyển danh sách ảnh thành MultipartBody.Part
             val imageParts = images?.map { file ->
                 val requestFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
                 MultipartBody.Part.createFormData("images", file.name, requestFile)
@@ -192,14 +191,10 @@ class AuthRepository {
             val userIdBody = userId.toRequestBody("text/plain".toMediaTypeOrNull())
             val postIdBody = postId.toRequestBody("text/plain".toMediaTypeOrNull())
             val contentBody = content?.toRequestBody("text/plain".toMediaTypeOrNull())
-
-            // Chuyển danh sách ảnh thành MultipartBody.Part
             val imageParts = images?.map { file ->
                 val requestFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
                 MultipartBody.Part.createFormData("images", file.name, requestFile)
             } ?: emptyList()
-
-            // Gọi API
             val response = apiService.updatePost(userIdBody,postIdBody,imageParts,contentBody)
             if (response.isSuccessful) {
                 response.body()
