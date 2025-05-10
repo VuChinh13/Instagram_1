@@ -59,7 +59,7 @@ class MyPostAdapter(
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         var liked = false
         val post = posts[position]
-        // kiểm tra xem bài viết đã được tym hay chưa
+     
         holder.imageLike.setImageResource(R.drawable.ic_heart)
         post.listLike.forEach { userLike ->
             if (userLike.username == userName) {
@@ -77,14 +77,14 @@ class MyPostAdapter(
         holder.tvTotalLike.text = post.totalLike.toString()
 
         holder.imageLike.setOnClickListener {
-            // Sự kiện tym và bỏ tym
+        
             if (liked) {
-                // nếu mà đã like rồi
+        
                 adapterScope.launch {
                     val result = authRepository.likePost(userId, post._id, -1)
                     withContext(Dispatchers.Main) {
                         if (result != null) {
-                            liked = !liked // Cập nhật lại trạng thái đã like hay chưa
+                            liked = !liked 
                             holder.imageLike.setImageResource(R.drawable.ic_heart)
                             post.totalLike -= 1
                             holder.tvTotalLike.text = post.totalLike.toString()
@@ -99,7 +99,7 @@ class MyPostAdapter(
                     val result = authRepository.likePost(userId, post._id, 1)
                     withContext(Dispatchers.Main) {
                         if (result != null) {
-                            liked = !liked // Cập nhật lại trạng thái đã like hay chưa
+                            liked = !liked 
                             holder.imageLike.setImageResource(R.drawable.ic_heart_red)
                             post.totalLike += 1
                             holder.tvTotalLike.text = post.totalLike.toString()
@@ -112,7 +112,7 @@ class MyPostAdapter(
             }
         }
 
-        // Chỉ inflate menu nếu nó chưa được thêm
+    
         if (holder.toolbar.menu.size() == 0) {
             holder.toolbar.inflateMenu(R.menu.menu_item)
         }
@@ -120,7 +120,7 @@ class MyPostAdapter(
         holder.toolbar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.menu_delete_post -> {
-                    // Lấy dữ liệu trong SharedPreferences
+
                     val sharedPreferences =
                         context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
                     val userId = sharedPreferences.getString("_id", "") ?: ""
@@ -135,7 +135,7 @@ class MyPostAdapter(
                                     Toast.LENGTH_SHORT
                                 )
                                     .show()
-                                // Xóa item khỏi danh sách
+                               
                                 posts.removeAt(position)
                                 notifyItemRemoved(position)
                                 notifyItemRangeChanged(position, posts.size)
@@ -150,7 +150,7 @@ class MyPostAdapter(
                 }
 
                 R.id.menu_edit_post -> {
-                    // Chuyển sang Activity EditPost
+                   
                     val intent = Intent(context, UpdatePostActivity::class.java).apply {
                         putStringArrayListExtra(EXTRA_POST_IMAGE, ArrayList(posts[position].images))
                         putExtra(EXTRA_POST_CONTENT, posts[position].content)
@@ -168,7 +168,6 @@ class MyPostAdapter(
     private fun formatCreatedAt(dateString: String): String {
         val inputFormatter = DateTimeFormatter.ISO_DATE_TIME
         val outputFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.ENGLISH)
-        // Chuyển đổi từ chuỗi sang LocalDateTime
         val dateTime = LocalDateTime.parse(dateString, inputFormatter)
         return dateTime.format(outputFormatter)
     }
