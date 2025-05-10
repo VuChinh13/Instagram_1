@@ -34,18 +34,14 @@ class HomeFragment : Fragment(), OnAvatarClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        homeViewModel.getPost()   
+        homeViewModel.getPost1()  
 
-        // Gọi các phương thức để lấy dữ liệu từ ViewModel
-        homeViewModel.getPost()    // Lấy tất cả các bài viết
-        homeViewModel.getPost1()   // Lấy thông tin người dùng
-
-        // Quan sát dữ liệu kết hợp từ combinedData
         homeViewModel.combinedData.observe(viewLifecycleOwner, Observer { combined ->
             val posts = combined.first
             val authors = combined.second
 
             if (posts != null && authors != null) {
-                // Cập nhật RecyclerView với các bài viết và tác giả
                 val sharedPreferences =
                     requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
                 val userId = sharedPreferences.getString("_id", "") ?: ""
@@ -54,10 +50,10 @@ class HomeFragment : Fragment(), OnAvatarClickListener {
                 binding.rvHome.layoutManager =
                     LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
                 val itemAnimator = DefaultItemAnimator().apply {
-                    addDuration = 400  // Thời gian thêm item
-                    removeDuration = 400  // Thời gian xóa item
-                    moveDuration = 400  // Thời gian di chuyển item
-                    changeDuration = 400  // Thời gian thay đổi item
+                    addDuration = 400  
+                    removeDuration = 400  
+                    moveDuration = 400  
+                    changeDuration = 400  
                 }
                 binding.rvHome.itemAnimator = itemAnimator
                 binding.rvHome.adapter = postAdapter
@@ -68,7 +64,6 @@ class HomeFragment : Fragment(), OnAvatarClickListener {
     }
 
     override fun onAvatarClick(username: String) {
-        // Khi nhấn vào avatar, thay đổi Fragment
         val profileFragment = ProfileFragment()
         val bundle = Bundle()
         bundle.putString(EXTRA_USER_NAME, username)
