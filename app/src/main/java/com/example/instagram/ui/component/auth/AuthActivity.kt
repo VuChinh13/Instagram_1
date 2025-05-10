@@ -27,13 +27,9 @@ class AuthActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding = ActivityAuthBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        // Chuyển sang bên Activity tạo tài khoản
         binding.btSignup.setOnClickListener {
             startActivity(Intent(this, SignupActivity::class.java))
         }
-
-        // Sự kiện nhấn nút login
         binding.btLogin.setOnClickListener {
             authViewModel.login(
                 binding.etUserName.text.toString().trim(),
@@ -44,8 +40,6 @@ class AuthActivity : AppCompatActivity() {
         authViewModel.errorMessage.observe(this) { errorMessage ->
             Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
         }
-
-        // Lắng nghe khi mà có sự thay đổi trong dữ liệu trả về từ Server thì cập nhật thông báo
         authViewModel.loginResult.observe(this) { result ->
             if (result != null) {
                 Toast.makeText(this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
