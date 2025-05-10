@@ -37,7 +37,7 @@ interface ApiService {
         @Query("perPage") perPage: Int = 10
     ): Response<PostResponse>
 
-    @GET("/api/v1/user/{username}") // Dùng {username} để định nghĩa path parameter
+    @GET("/api/v1/user/{username}") 
     suspend fun getInforUser(@Path("username") username: String): Response<InforUserResponse?>
 
     @PATCH("/api/v1/user")
