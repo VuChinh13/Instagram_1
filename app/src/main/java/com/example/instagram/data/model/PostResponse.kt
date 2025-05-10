@@ -3,13 +3,13 @@ package com.example.instagram.data.model
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
-// Trạng thái phản hồi chính từ API
+
 data class PostResponse(
     val status: Boolean,
     val data: PostData
 )
 
-// Dữ liệu chứa danh sách bài đăng
+
 data class PostData(
     val page: Int,
     val totalPage: Int,
@@ -17,7 +17,7 @@ data class PostData(
     val data: MutableList<Post>
 )
 
-// Thông tin bài đăng
+
 data class Post(
     val _id: String,
     val author: Author,
@@ -29,7 +29,7 @@ data class Post(
     var totalLike: Int
 )
 
-// Thông tin tác giả bài đăng
+
 data class Author(
     val username: String,
     val name: String,
@@ -39,7 +39,7 @@ data class Author(
     val introduce: String
 )
 
-// Người đã thích bài viế
+
 data class UserLike(
     val username: String,
     val name: String,
