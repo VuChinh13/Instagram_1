@@ -76,14 +76,14 @@ class PostAdapter(
 
     override fun getItemId(position: Int): Long {
         return if (position == 0) {
-            0L // Trả về ID riêng cho item đầu tiên (header)
+            0L 
         } else {
-            posts[position - 1]._id.hashCode().toLong() // Cung cấp ID duy nhất cho các item bình thường
+            posts[position - 1]._id.hashCode().toLong() 
         }
     }
 
     init {
-        setHasStableIds(true)  // Đảm bảo RecyclerView sử dụng stable IDs
+        setHasStableIds(true) 
     }
 
 
@@ -108,13 +108,10 @@ class PostAdapter(
             check = true
             Log.d("KT", authors.size.toString())
             authors.forEach { author ->
-                // Inflating view for each story item
                 val storyItemView =
                     LayoutInflater.from(context).inflate(R.layout.story_item, holder.story, false)
-
-                // Assign user-specific image or data to the story item view (e.g., set image, text)
                 val imageView: ImageView =
-                    storyItemView.findViewById(R.id.iv_user_story)  // Assuming iv_user_story is the ImageView for user's avatar
+                    storyItemView.findViewById(R.id.iv_user_story)  
                 Glide.with(context)
                     .load(author.avatar)
                     .error(R.drawable.ic_avatar)
@@ -122,16 +119,10 @@ class PostAdapter(
                     .into(imageView)
 
                 val textView: TextView =
-                    storyItemView.findViewById(R.id.textView2)  // Assuming textView2 is the TextView for the user's name or description
+                    storyItemView.findViewById(R.id.textView2)  
                 textView.text = author.username
-
-                // Add the inflated view to the story container
                 holder.story.addView(storyItemView)
 
-
-                // Handle normal post logic here
-                // Nếu không phải item đầu tiên thì trả về item bình thường
-                // kiểm tra xem bài viết đã được tym hay chưa
                 holder.imageLike.setImageResource(R.drawable.ic_heart)
                 post.listLike.forEach { userLike ->
                     if (userLike.username == userName) {
@@ -148,15 +139,13 @@ class PostAdapter(
                 holder.viewPager.adapter = ImagePagerAdapter(post.images)
                 holder.tvTotalLike.text = post.totalLike.toString()
 
-
-                // sự kiện tym bài viết
                 holder.imageLike.setOnClickListener {
                     if (liked) {
                         // nếu mà đã like rồi
                         adapterScope.launch {
                             val result = authRepository.likePost(userId, post._id, -1)
                             if (result != null) {
-                                liked = !liked // Cập nhật lại trạng thái đã like hay chưa
+                                liked = !liked
                                 holder.imageLike.setImageResource(R.drawable.ic_heart)
                                 post.totalLike -= 1
                                 holder.tvTotalLike.text = post.totalLike.toString()
@@ -169,7 +158,7 @@ class PostAdapter(
                         adapterScope.launch {
                             val result = authRepository.likePost(userId, post._id, 1)
                             if (result != null) {
-                                liked = !liked // Cập nhật lại trạng thái đã like hay chưa
+                                liked = !liked
                                 holder.imageLike.setImageResource(R.drawable.ic_heart_red)
                                 post.totalLike += 1
                                 holder.tvTotalLike.text = post.totalLike.toString()
@@ -180,16 +169,11 @@ class PostAdapter(
                         }
                     }
                 }
-
-                // Hiển thị thông tin của người dùng
                 holder.imageAvatar.setOnClickListener {
                     listener.onAvatarClick(post.author.username) // Gọi callback khi nhấn vào avatar
                 }
             }
         } else if (holder is PostViewHolder) {
-            // Handle normal post logic here
-            // Nếu không phải item đầu tiên thì trả về item bình thường
-            // kiểm tra xem bài viết đã được tym hay chưa
             holder.imageLike.setImageResource(R.drawable.ic_heart)
             post.listLike.forEach { userLike ->
                 if (userLike.username == userName) {
@@ -205,16 +189,13 @@ class PostAdapter(
                 .into(holder.imageAvatar)
             holder.viewPager.adapter = ImagePagerAdapter(post.images)
             holder.tvTotalLike.text = post.totalLike.toString()
-
-
-            // sự kiện tym bài viết
             holder.imageLike.setOnClickListener {
                 if (liked) {
                     // nếu mà đã like rồi
                     adapterScope.launch {
                         val result = authRepository.likePost(userId, post._id, -1)
                         if (result != null) {
-                            liked = !liked // Cập nhật lại trạng thái đã like hay chưa
+                            liked = !liked 
                             holder.imageLike.setImageResource(R.drawable.ic_heart)
                             post.totalLike -= 1
                             holder.tvTotalLike.text = post.totalLike.toString()
@@ -227,7 +208,7 @@ class PostAdapter(
                     adapterScope.launch {
                         val result = authRepository.likePost(userId, post._id, 1)
                         if (result != null) {
-                            liked = !liked // Cập nhật lại trạng thái đã like hay chưa
+                            liked = !liked
                             holder.imageLike.setImageResource(R.drawable.ic_heart_red)
                             post.totalLike += 1
                             holder.tvTotalLike.text = post.totalLike.toString()
@@ -238,10 +219,8 @@ class PostAdapter(
                     }
                 }
             }
-
-            // Hiển thị thông tin của người dùng
             holder.imageAvatar.setOnClickListener {
-                listener.onAvatarClick(post.author.username) // Gọi callback khi nhấn vào avatar
+                listener.onAvatarClick(post.author.username) 
             }
         }
     }
@@ -249,8 +228,6 @@ class PostAdapter(
     private fun formatCreatedAt(dateString: String): String {
         val inputFormatter = DateTimeFormatter.ISO_DATE_TIME
         val outputFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.ENGLISH)
-
-        // Chuyển đổi từ chuỗi sang LocalDateTime
         val dateTime = LocalDateTime.parse(dateString, inputFormatter)
         return dateTime.format(outputFormatter)
     }
