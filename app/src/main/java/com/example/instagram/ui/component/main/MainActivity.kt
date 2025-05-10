@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
             val myProfileFragment = MyProfileFragment()
             val transactionMyProfileFragment = supportFragmentManager.beginTransaction()
             transactionMyProfileFragment.setCustomAnimations(
-                R.anim.slide_in_right, // Hiệu ứng khi Fragment mới vào (hiện dần dần)
+                R.anim.slide_in_right, 
                 R.anim.slide_out_left,
                 0,
                 0
