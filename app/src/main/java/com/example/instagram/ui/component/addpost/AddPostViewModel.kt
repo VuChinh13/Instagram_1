@@ -15,8 +15,6 @@ import java.io.File
 
 class AddPostViewModel : ViewModel(){
     private val authRepository = AuthRepository()
-
-    // LiveData để lưu trữ kết quả trả về từ Server
     private val _getPostResponse = MutableLiveData<PostResponse?>()
     val getPostResponse: LiveData<PostResponse?> = _getPostResponse
 
@@ -27,7 +25,7 @@ class AddPostViewModel : ViewModel(){
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             val result = authRepository.addPost(userId, content, images)
-            _getPostResponse.postValue(result) // Cập nhật LiveData
+            _getPostResponse.postValue(result) 
         }
     }
 
