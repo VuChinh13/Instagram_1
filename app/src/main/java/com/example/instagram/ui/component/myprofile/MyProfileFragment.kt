@@ -42,19 +42,12 @@ class MyProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Lấy username mà nằm trong Shared
         val sharedPreferences =
             requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
         val userName = sharedPreferences.getString("username", "").toString()
-
-        // lấy thông tin từ trên Server
         myProfileViewModel.getInforUser(userName)
         myProfileViewModel.getUserPosts(userName)
-
-
-        // chuyển sang bên UpdateInformation
         binding.ivUpdateInfor.setOnClickListener {
-            // Tạo một Bundle để chứa dữ liệu
             Log.d("Check null", inforUserResponse?.data?.name.toString())
             val bundle = Bundle().apply {
                 putString(EXTRA_NAME, inforUserResponse?.data?.name.toString())
@@ -67,7 +60,6 @@ class MyProfileFragment : Fragment() {
             val updateInformationFragment = UpdateInformationFragment()
             updateInformationFragment.arguments = bundle
 
-            // Thực hiện giao dịch
             requireActivity().supportFragmentManager.beginTransaction()
                 .add(R.id.fragment, updateInformationFragment)
                 .addToBackStack(null)
@@ -119,32 +111,23 @@ class MyProfileFragment : Fragment() {
             }
         }
 
-
-        // sự kiện logout
         binding.ivLogout.setOnClickListener {
             val alertDialog = AlertDialog.Builder(requireContext(), android.R.style.Theme_Material_Dialog_Alert)
                 .setTitle("Đăng xuất")
                 .setMessage("Bạn có chắc chắn muốn đăng xuất tài khoản?")
                 .setPositiveButton("Đồng ý") { dialog, _ ->
-                    // Khi nhấn đăng xuất thì thực hiện đăng xuất
                     val sharedPreferences =
                         requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
                     sharedPreferences.edit().clear().apply()
-
-                    // Chuyển hướng về SplashActivity
                     val intent = Intent(requireActivity(), SplashActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
-
-                    // Đóng hộp thoại và quay lại màn hình trước
                     dialog.dismiss()
                     parentFragmentManager.popBackStack()
                 }
                 .setNegativeButton("Hủy") { dialog, _ ->
-                    // Khi mà nhấn hủy thì đóng hộp thoại
                     dialog.dismiss()
                 }
-            // Hiển thị hộp thoại
             alertDialog.show()
         }
     }
@@ -165,11 +148,9 @@ class MyProfileFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        // Trường hợp khi mà quay lại thì cập nhật lại dữ liệu mới nhất thì lưu vào trong shared
         val sharedPreferences =
             requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
         val userName = sharedPreferences.getString("username", "").toString()
-
         myProfileViewModel.getInforUser(userName)
         myProfileViewModel.getUserPosts(userName)
     }
