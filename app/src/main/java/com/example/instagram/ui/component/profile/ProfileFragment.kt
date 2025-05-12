@@ -33,8 +33,6 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         val userName = arguments?.getString(EXTRA_USER_NAME).toString()
-
-        // lấy thông tin từ trên Server
         myProfileViewModel.getInforUser(userName)
         myProfileViewModel.getUserPosts(userName)
 
@@ -58,10 +56,10 @@ class ProfileFragment : Fragment() {
                         LinearLayoutManager.VERTICAL, false
                     )
                     val itemAnimator = DefaultItemAnimator().apply {
-                        addDuration = 400  // Thời gian thêm item
-                        removeDuration = 400  // Thời gian xóa item
-                        moveDuration = 400  // Thời gian di chuyển item
-                        changeDuration = 400  // Thời gian thay đổi item
+                        addDuration = 400  
+                        removeDuration = 400 
+                        moveDuration = 400  
+                        changeDuration = 400 
                     }
                     binding.rvPost.itemAnimator = itemAnimator
                     binding.rvPost.adapter = postAdapter
