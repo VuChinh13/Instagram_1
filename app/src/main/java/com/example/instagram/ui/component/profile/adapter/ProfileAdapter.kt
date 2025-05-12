@@ -53,7 +53,6 @@ class ProfileAdapter(
     override fun onBindViewHolder(holder: ProfileViewHolder, position: Int) {
         var liked = false
         val post = posts[position]
-        // kiểm tra xem bài viết đã được tym hay chưa
         holder.imageLike.setImageResource(R.drawable.ic_heart)
         post.listLike.forEach { userLike ->
             if (userLike.username == userName) {
@@ -71,14 +70,12 @@ class ProfileAdapter(
         holder.tvTotalLike.text = post.totalLike.toString()
 
         holder.imageLike.setOnClickListener {
-            // Sự kiện tym và bỏ tym
             if (liked) {
-                // nếu mà đã like rồi
                 adapterScope.launch {
                     val result = authRepository.likePost(userId, post._id, -1)
                     withContext(Dispatchers.Main) {
                         if (result != null) {
-                            liked = !liked // Cập nhật lại trạng thái đã like hay chưa
+                            liked = !liked 
                             holder.imageLike.setImageResource(R.drawable.ic_heart)
                             post.totalLike -= 1
                             holder.tvTotalLike.text = post.totalLike.toString()
@@ -110,8 +107,6 @@ class ProfileAdapter(
     private fun formatCreatedAt(dateString: String): String {
         val inputFormatter = DateTimeFormatter.ISO_DATE_TIME
         val outputFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.ENGLISH)
-
-        // Chuyển đổi từ chuỗi sang LocalDateTime
         val dateTime = LocalDateTime.parse(dateString, inputFormatter)
         return dateTime.format(outputFormatter)
     }
