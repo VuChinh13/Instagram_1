@@ -71,7 +71,7 @@ class HomeFragment : Fragment(), OnAvatarClickListener {
 
         val transaction = requireActivity().supportFragmentManager.beginTransaction()
         transaction.setCustomAnimations(
-            R.anim.slide_in_right, // Hiệu ứng khi Fragment mới vào (hiện dần dần)
+            R.anim.slide_in_right, 
             R.anim.slide_out_left,
             0,
             0
