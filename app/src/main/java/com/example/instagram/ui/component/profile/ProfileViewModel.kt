@@ -13,8 +13,6 @@ import kotlinx.coroutines.launch
 
 class ProfileViewModel : ViewModel() {
     private val authRepository = AuthRepository()
-
-    // LiveData để lưu trữ kết quả trả về từ Server
     private val _getInforUserResult = MutableLiveData<InforUserResponse?>()
     val getInforUserResult: LiveData<InforUserResponse?> = _getInforUserResult
 
