@@ -28,8 +28,6 @@ class UpdatePostActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding = ActivityUpdatePostBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        // Nhận dữ liệu
         val images: ArrayList<String> =
             intent.getStringArrayListExtra(EXTRA_POST_IMAGE) ?: arrayListOf()
         val content: String = intent.getStringExtra(EXTRA_POST_CONTENT) ?: ""
@@ -38,7 +36,6 @@ class UpdatePostActivity : AppCompatActivity() {
         binding.etContent.append(content)
 
         if (images.isNotEmpty()){
-            // Chỉ hiển thị ảnh đầu tiên khi mà có nhiều ảnh
             Glide.with(this).load(images[0]).into(binding.ivPostImage)
         }
 
@@ -62,8 +59,6 @@ class UpdatePostActivity : AppCompatActivity() {
                 finish()
             } else Toast.makeText(this,"Đã xảy ra lỗi hãy kiểm tra lại",Toast.LENGTH_SHORT).show()
         }
-
-        // Sự kiện khi mà nhấn Save
         binding.btSave.setOnClickListener {
             val sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
             val userId = sharedPreferences.getString("_id", "") ?: ""
@@ -71,8 +66,6 @@ class UpdatePostActivity : AppCompatActivity() {
         }
         binding.ivClose.setOnClickListener { finish() }
     }
-
-    // Hàm dùng để chuyển uri thành 1 đối tượng là File
     private fun uriToFile(context: Context, uri: Uri): File {
         val contentResolver = context.contentResolver
         val inputStream = contentResolver.openInputStream(uri)
