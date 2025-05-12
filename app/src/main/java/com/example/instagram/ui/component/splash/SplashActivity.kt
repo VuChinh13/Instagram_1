@@ -17,19 +17,15 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
-
-        // Delay màn hình splash
         Handler(Looper.getMainLooper()).postDelayed({
-            // Kiểm tra xem có dữ liệu đã được lưu trong Shared chưa
             val sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
             if (sharedPreferences.all.isEmpty()) {
-                // khi mà rỗng thì sang bên đăng nhập
                 startActivity(Intent(this, AuthActivity::class.java))
                 finish()
             } else {
                 startActivity(Intent(this, MainActivity::class.java))
                 finish()
             }
-        }, 2000) // 2 giây
+        }, 2000) 
     }
 }
