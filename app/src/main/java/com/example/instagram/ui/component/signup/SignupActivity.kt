@@ -24,18 +24,12 @@ class SignupActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySignupBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        // Quay lại màn hình trước
         binding.ivBackArrow.setOnClickListener {
             finish()
         }
-
-        // Lắng nghe khi mà có sự thay đổi trong dữ liệu trả về từ Server thì cập nhật thông báo
         signupViewModel.errorMessage.observe(this, Observer { errorMessage ->
             Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
         })
-
-        // Lắng nghe khi mà có sự thay đổi trong dữ liệu trả về từ Server thì cập nhật thông báo
         signupViewModel.signResult.observe(this) { result ->
             if (result != null) {
                 Toast.makeText(this, result.message, Toast.LENGTH_SHORT).show()
