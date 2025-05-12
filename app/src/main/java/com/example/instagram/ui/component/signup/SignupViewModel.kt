@@ -9,8 +9,6 @@ import kotlinx.coroutines.launch
 
 class SignupViewModel : ViewModel() {
     private val authRepository = AuthRepository()
-
-    // LiveData để lưu trữ kết quả trả về từ Server
     private val _signupResult = MutableLiveData<SignupResponse?>()
     val signResult: LiveData<SignupResponse?> = _signupResult
 
