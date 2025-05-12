@@ -38,7 +38,6 @@ class UpdateInformationFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Lấy dữ liệu từ Bundle (Arguments)
         arguments?.let {
             name = it.getString(EXTRA_NAME)
             gender = it.getString(EXTRA_GENDER)
@@ -61,8 +60,6 @@ class UpdateInformationFragment : Fragment() {
         if (avatar?.isEmpty() == true) {
             binding.ivAvatar.setImageResource(R.drawable.ic_avatar)
         } else Glide.with(this).load(avatar).error(R.drawable.ic_avatar).into(binding.ivAvatar)
-
-        // trường hợp nếu mà giới tính là null thì để là khác
         val items = listOf("Nam", "Nữ", "Khác")
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, items)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -73,14 +70,11 @@ class UpdateInformationFragment : Fragment() {
             binding.spinnerGender.setSelection(0)
 
         } else binding.spinnerGender.setSelection(1)
-
-        // Lấy dữ liệu trong SharedPreferences
         val sharedPreferences = requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
         val userId = sharedPreferences.getString("_id", "") ?: ""
 
         updateInformationViewModel.updateInforResult.observe(viewLifecycleOwner) { result ->
             if (result != null) {
-                // Thay đổi thông tin người dùng thành công
                 val sharedPreferences = requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
                 val editor = sharedPreferences.edit()
                 editor.putString("username", result.data.username)
@@ -107,12 +101,10 @@ class UpdateInformationFragment : Fragment() {
         val pickMedia =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 uri?.let {
-                    selectedImageUri = it // Lưu Uri vào biến
-                    binding.ivAvatar.setImageURI(it) // Hiển thị ảnh trên ImageView
+                    selectedImageUri = it 
+                    binding.ivAvatar.setImageURI(it) 
                 }
             }
-
-        // Khi mà nhấn Avatar thì chọn ảnh từ thư viện
         binding.ivAvatar.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
@@ -125,11 +117,10 @@ class UpdateInformationFragment : Fragment() {
                     requireContext(),
                     it
                 )
-            } // Chuyển uri thành File nếu mà có ảnh mới
+            }
             if (binding.etOldPassword.text.toString()
                     .isEmpty() && binding.etNewPassword.text.toString().isEmpty()
             ) {
-                // nếu mà 2 trường này mà trống thì truyền null
                 updateInformationViewModel.updateInformation(
                     null,
                     null,
@@ -155,8 +146,6 @@ class UpdateInformationFragment : Fragment() {
         }
 
     }
-
-    // Hàm dùng để chuyển uri thành 1 đối tượng là File
     private fun uriToFile(context: Context, uri: Uri): File {
         val contentResolver = context.contentResolver
         val inputStream = contentResolver.openInputStream(uri)
