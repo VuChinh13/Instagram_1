@@ -170,7 +170,7 @@ class PostAdapter(
                     }
                 }
                 holder.imageAvatar.setOnClickListener {
-                    listener.onAvatarClick(post.author.username) // Gọi callback khi nhấn vào avatar
+                    listener.onAvatarClick(post.author.username) 
                 }
             }
         } else if (holder is PostViewHolder) {
