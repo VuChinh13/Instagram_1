@@ -29,6 +29,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_marginRight="10dp"
                 android:layout_marginLeft="20dp">
 
 
@@ -38,7 +39,7 @@
                     android:layout_height="wrap_content"
                     app:cardBackgroundColor="@color/white"
                     app:cardCornerRadius="40dp"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:strokeColor="#FF6541"
@@ -46,8 +47,8 @@
 
                     <ImageView
                         android:id="@+id/iv_user_story"
-                        android:layout_width="70dp"
-                        android:layout_height="70dp"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
                         android:scaleType="centerCrop"
                         tools:srcCompat="@tools:sample/avatars" />
                 </com.google.android.material.card.MaterialCardView>
@@ -59,8 +60,8 @@
                     android:layout_marginTop="6dp"
                     android:fontFamily="sans-serif-medium"
                     android:text="Tin của bạn"
-                    app:layout_constraintLeft_toLeftOf="@id/cardview"
-                    app:layout_constraintRight_toRightOf="@id/cardview"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/cardview" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>

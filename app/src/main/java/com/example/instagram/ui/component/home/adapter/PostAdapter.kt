@@ -35,7 +35,8 @@ class PostAdapter(
     private val userName: String,
     private val userId: String,
     private val context: Context,
-    private val listener: OnAvatarClickListener
+    private val listener: OnAvatarClickListener,
+    private val userAvatar: String
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val authRepository = AuthRepository()
@@ -76,14 +77,14 @@ class PostAdapter(
 
     override fun getItemId(position: Int): Long {
         return if (position == 0) {
-            0L 
+            0L
         } else {
-            posts[position - 1]._id.hashCode().toLong() 
+            posts[position - 1]._id.hashCode().toLong()
         }
     }
 
     init {
-        setHasStableIds(true) 
+        setHasStableIds(true)
     }
 
 
@@ -106,12 +107,14 @@ class PostAdapter(
         val post = posts[position]
         if (holder is FirstPostViewHolder && check == false) {
             check = true
-            Log.d("KT", authors.size.toString())
+
+            // Hiển thị dữ liệu cho item đầu tiên
             authors.forEach { author ->
                 val storyItemView =
                     LayoutInflater.from(context).inflate(R.layout.story_item, holder.story, false)
                 val imageView: ImageView =
-                    storyItemView.findViewById(R.id.iv_user_story)  
+                    storyItemView.findViewById(R.id.iv_user_story)
+
                 Glide.with(context)
                     .load(author.avatar)
                     .error(R.drawable.ic_avatar)
@@ -119,61 +122,16 @@ class PostAdapter(
                     .into(imageView)
 
                 val textView: TextView =
-                    storyItemView.findViewById(R.id.textView2)  
+                    storyItemView.findViewById(R.id.textView2)
                 textView.text = author.username
                 holder.story.addView(storyItemView)
-
-                holder.imageLike.setImageResource(R.drawable.ic_heart)
-                post.listLike.forEach { userLike ->
-                    if (userLike.username == userName) {
-                        holder.imageLike.setImageResource(R.drawable.ic_heart_red)
-                        liked = true
-                    }
-                }
-                holder.username.text = post.author.username
-                holder.caption.text = post.content
-                holder.tvCreateAt.text = formatCreatedAt(post.createdAt)
-                Glide.with(holder.itemView.context).load(post.author.avatar)
-                    .error(R.drawable.ic_avatar)
-                    .into(holder.imageAvatar)
-                holder.viewPager.adapter = ImagePagerAdapter(post.images)
-                holder.tvTotalLike.text = post.totalLike.toString()
-
-                holder.imageLike.setOnClickListener {
-                    if (liked) {
-                        // nếu mà đã like rồi
-                        adapterScope.launch {
-                            val result = authRepository.likePost(userId, post._id, -1)
-                            if (result != null) {
-                                liked = !liked
-                                holder.imageLike.setImageResource(R.drawable.ic_heart)
-                                post.totalLike -= 1
-                                holder.tvTotalLike.text = post.totalLike.toString()
-                                Toast.makeText(context, result.message, Toast.LENGTH_SHORT).show()
-                            } else {
-                                Toast.makeText(context, "Đã có lỗi xảy ra", Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                    } else {
-                        adapterScope.launch {
-                            val result = authRepository.likePost(userId, post._id, 1)
-                            if (result != null) {
-                                liked = !liked
-                                holder.imageLike.setImageResource(R.drawable.ic_heart_red)
-                                post.totalLike += 1
-                                holder.tvTotalLike.text = post.totalLike.toString()
-                                Toast.makeText(context, result.message, Toast.LENGTH_SHORT).show()
-                            } else {
-                                Toast.makeText(context, "Đã có lỗi xảy ra", Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                    }
-                }
-                holder.imageAvatar.setOnClickListener {
-                    listener.onAvatarClick(post.author.username) 
-                }
             }
-        } else if (holder is PostViewHolder) {
+
+            Glide.with(context)
+                .load(userAvatar)
+                .error(R.drawable.ic_avatar)
+                .apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
+                .into(holder.imageUserStory)
             holder.imageLike.setImageResource(R.drawable.ic_heart)
             post.listLike.forEach { userLike ->
                 if (userLike.username == userName) {
@@ -189,13 +147,14 @@ class PostAdapter(
                 .into(holder.imageAvatar)
             holder.viewPager.adapter = ImagePagerAdapter(post.images)
             holder.tvTotalLike.text = post.totalLike.toString()
+
             holder.imageLike.setOnClickListener {
                 if (liked) {
                     // nếu mà đã like rồi
                     adapterScope.launch {
                         val result = authRepository.likePost(userId, post._id, -1)
                         if (result != null) {
-                            liked = !liked 
+                            liked = !liked
                             holder.imageLike.setImageResource(R.drawable.ic_heart)
                             post.totalLike -= 1
                             holder.tvTotalLike.text = post.totalLike.toString()
@@ -220,7 +179,56 @@ class PostAdapter(
                 }
             }
             holder.imageAvatar.setOnClickListener {
-                listener.onAvatarClick(post.author.username) 
+                listener.onAvatarClick(post.author.username)
+            }
+        } else if (holder is PostViewHolder) {
+            holder.imageLike.setImageResource(R.drawable.ic_heart)
+            post.listLike.forEach { userLike ->
+                if (userLike.username == userName) {
+                    holder.imageLike.setImageResource(R.drawable.ic_heart_red)
+                    liked = true
+                }
+            }
+            holder.username.text = post.author.username
+            holder.caption.text = post.content
+            holder.tvCreateAt.text = formatCreatedAt(post.createdAt)
+            Glide.with(holder.itemView.context).load(post.author.avatar)
+                .error(R.drawable.ic_avatar)
+                .into(holder.imageAvatar)
+            holder.viewPager.adapter = ImagePagerAdapter(post.images)
+            holder.tvTotalLike.text = post.totalLike.toString()
+            holder.imageLike.setOnClickListener {
+                if (liked) {
+                    // nếu mà đã like rồi
+                    adapterScope.launch {
+                        val result = authRepository.likePost(userId, post._id, -1)
+                        if (result != null) {
+                            liked = !liked
+                            holder.imageLike.setImageResource(R.drawable.ic_heart)
+                            post.totalLike -= 1
+                            holder.tvTotalLike.text = post.totalLike.toString()
+                            Toast.makeText(context, result.message, Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(context, "Đã có lỗi xảy ra", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                } else {
+                    adapterScope.launch {
+                        val result = authRepository.likePost(userId, post._id, 1)
+                        if (result != null) {
+                            liked = !liked
+                            holder.imageLike.setImageResource(R.drawable.ic_heart_red)
+                            post.totalLike += 1
+                            holder.tvTotalLike.text = post.totalLike.toString()
+                            Toast.makeText(context, result.message, Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(context, "Đã có lỗi xảy ra", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+            holder.imageAvatar.setOnClickListener {
+                listener.onAvatarClick(post.author.username)
             }
         }
     }

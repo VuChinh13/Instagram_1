@@ -46,7 +46,8 @@ class HomeFragment : Fragment(), OnAvatarClickListener {
                     requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
                 val userId = sharedPreferences.getString("_id", "") ?: ""
                 val userName = sharedPreferences.getString("username", "") ?: ""
-                postAdapter = PostAdapter(posts.data.data, authors, userName, userId, requireContext(),this)
+                val userAvatar = sharedPreferences.getString("avatar","") ?: ""
+                postAdapter = PostAdapter(posts.data.data, authors, userName, userId, requireContext(),this,userAvatar)
                 binding.rvHome.layoutManager =
                     LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
                 val itemAnimator = DefaultItemAnimator().apply {
