@@ -1,18 +1,20 @@
 package com.example.instagram.ui.component.main
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.example.instagram.R
 import com.example.instagram.databinding.ActivityMainBinding
 import com.example.instagram.ui.component.addpost.AddPostFragment
+import com.example.instagram.ui.component.animation.FragmentTransactionAnimation.setSlideAnimations
 import com.example.instagram.ui.component.home.HomeFragment
 import com.example.instagram.ui.component.myprofile.MyProfileFragment
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    var fragmentCurrent = "HomeFragment"
+    var countFragment = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -20,31 +22,50 @@ class MainActivity : AppCompatActivity() {
 
         val homeFragment = HomeFragment()
         val transactionHomeFragment = supportFragmentManager.beginTransaction()
-        transactionHomeFragment.add(R.id.fragment,homeFragment)
+        transactionHomeFragment.add(R.id.fragment, homeFragment)
+        transactionHomeFragment.addToBackStack(null)
         transactionHomeFragment.commit()
 
         binding.btnAdd.setOnClickListener {
-            val addPostFragment = AddPostFragment()
-            val transactionAddPostFragment = supportFragmentManager.beginTransaction()
-            transactionAddPostFragment.setCustomAnimations(R.anim.slide_in_right,R.anim.slide_out_left,0,0)
-            transactionAddPostFragment.add(R.id.fragment,addPostFragment)
-            transactionAddPostFragment.addToBackStack(null)
-            transactionAddPostFragment.commit()
+            if (fragmentCurrent != "AddPostFragment") {
+                val addPostFragment = AddPostFragment()
+                val transactionAddPostFragment = supportFragmentManager.beginTransaction()
+                transactionAddPostFragment.setSlideAnimations()
+                transactionAddPostFragment.add(R.id.fragment, addPostFragment)
+                transactionAddPostFragment.addToBackStack(null)
+                transactionAddPostFragment.commit()
+            }
         }
 
         binding.btnMyProfile.setOnClickListener {
-            val myProfileFragment = MyProfileFragment()
-            val transactionMyProfileFragment = supportFragmentManager.beginTransaction()
-            transactionMyProfileFragment.setCustomAnimations(
-                R.anim.slide_in_right, 
-                R.anim.slide_out_left,
-                0,
-                0
-            )
-            transactionMyProfileFragment.add(R.id.fragment,myProfileFragment)
-            transactionMyProfileFragment.addToBackStack(null)
-            transactionMyProfileFragment.commit()
+            if (fragmentCurrent != "MyProfileFragment") {
+                val myProfileFragment = MyProfileFragment()
+                val transactionMyProfileFragment = supportFragmentManager.beginTransaction()
+                transactionMyProfileFragment.setSlideAnimations()
+                transactionMyProfileFragment.add(R.id.fragment, myProfileFragment)
+                transactionMyProfileFragment.addToBackStack(null)
+                transactionMyProfileFragment.commit()
+            }
         }
 
+        binding.btnHome.setOnClickListener {
+            if (fragmentCurrent == "AddPostFragment" || fragmentCurrent == "MyProfileFragment") {
+                // quay trở lại màn Home vẫn giữ trạng thái
+                // count bao nhiêu lần thì pop tưng đó lần
+                for (i in 0 until countFragment) {
+                    supportFragmentManager.popBackStack()
+                }
+                fragmentCurrent = "HomeFragment"
+                countFragment = 0
+            } else {
+                val homeFragment = HomeFragment()
+                val transactionHomeFragment = supportFragmentManager.beginTransaction()
+                transactionHomeFragment.replace(R.id.fragment, homeFragment)
+                transactionHomeFragment.addToBackStack(null)
+                transactionHomeFragment.commit()
+                fragmentCurrent = "HomeFragment"
+                countFragment = 0
+            }
+        }
     }
 }

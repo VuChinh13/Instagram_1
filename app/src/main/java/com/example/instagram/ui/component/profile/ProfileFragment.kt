@@ -13,8 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.instagram.R
 import com.example.instagram.databinding.FragmentProfileBinding
-import com.example.instagram.ui.component.home.adapter.EXTRA_USER_NAME
 import com.example.instagram.ui.component.profile.adapter.ProfileAdapter
+import com.example.instagram.ui.component.utils.IntentExtras
 
 
 class ProfileFragment : Fragment() {
@@ -26,13 +26,13 @@ class ProfileFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentProfileBinding.inflate(layoutInflater,container,false)
+        binding = FragmentProfileBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        val userName = arguments?.getString(EXTRA_USER_NAME).toString()
+        val userName = arguments?.getString(IntentExtras.EXTRA_USER_NAME).toString()
         myProfileViewModel.getInforUser(userName)
         myProfileViewModel.getUserPosts(userName)
 
@@ -46,20 +46,22 @@ class ProfileFragment : Fragment() {
                     binding.tvTitle1.visibility = View.GONE
                     binding.ivCamera.visibility = View.GONE
 
-                    val sharedPreferences = requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+                    val sharedPreferences =
+                        requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
                     val userId = sharedPreferences.getString("_id", "") ?: ""
                     val myUserName = sharedPreferences.getString("username", "") ?: ""
 
-                    postAdapter = ProfileAdapter(requireContext(), result.data.data, myUserName, userId)
+                    postAdapter =
+                        ProfileAdapter(requireContext(), result.data.data, myUserName, userId)
                     binding.rvPost.layoutManager = LinearLayoutManager(
                         requireContext(),
                         LinearLayoutManager.VERTICAL, false
                     )
                     val itemAnimator = DefaultItemAnimator().apply {
-                        addDuration = 400  
-                        removeDuration = 400 
-                        moveDuration = 400  
-                        changeDuration = 400 
+                        addDuration = 400
+                        removeDuration = 400
+                        moveDuration = 400
+                        changeDuration = 400
                     }
                     binding.rvPost.itemAnimator = itemAnimator
                     binding.rvPost.adapter = postAdapter

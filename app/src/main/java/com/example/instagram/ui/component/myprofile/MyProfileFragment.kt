@@ -1,5 +1,6 @@
 package com.example.instagram.ui.component.myprofile
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -16,15 +17,12 @@ import com.bumptech.glide.Glide
 import com.example.instagram.R
 import com.example.instagram.data.model.InforUserResponse
 import com.example.instagram.databinding.FragmentMyProfileBinding
+import com.example.instagram.ui.component.main.MainActivity
 import com.example.instagram.ui.component.myprofile.adapter.MyPostAdapter
 import com.example.instagram.ui.component.splash.SplashActivity
 import com.example.instagram.ui.component.updateinformation.UpdateInformationFragment
-
-const val EXTRA_NAME = "extra_name"
-const val EXTRA_GENDER = "extra_gender"
-const val EXTRA_AVATAR = "extra_avatar"
-const val EXTRA_ADDRESS = "extra_address"
-const val EXTRA_INTRODUCE = "extra_introduce"
+import com.example.instagram.ui.component.utils.IntentExtras
+import com.example.instagram.ui.component.utils.SharedPrefer
 
 class MyProfileFragment : Fragment() {
     private lateinit var binding: FragmentMyProfileBinding
@@ -40,21 +38,30 @@ class MyProfileFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("UseKtx")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val sharedPreferences =
-            requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
-        val userName = sharedPreferences.getString("username", "").toString()
+
+        (activity as MainActivity).fragmentCurrent = "MyProfileFragment"
+        (activity as MainActivity).countFragment ++
+
+        SharedPrefer.updateContext(requireContext())
+        val userName = SharedPrefer.getUserName()
         myProfileViewModel.getInforUser(userName)
         myProfileViewModel.getUserPosts(userName)
+
+
         binding.ivUpdateInfor.setOnClickListener {
             Log.d("Check null", inforUserResponse?.data?.name.toString())
             val bundle = Bundle().apply {
-                putString(EXTRA_NAME, inforUserResponse?.data?.name.toString())
-                putString(EXTRA_GENDER, inforUserResponse?.data?.gender.toString())
-                putString(EXTRA_AVATAR, inforUserResponse?.data?.avatar.toString())
-                putString(EXTRA_INTRODUCE, inforUserResponse?.data?.introduce.toString())
-                putString(EXTRA_ADDRESS, inforUserResponse?.data?.address.toString())
+                putString(IntentExtras.EXTRA_NAME, inforUserResponse?.data?.name.toString())
+                putString(IntentExtras.EXTRA_GENDER, inforUserResponse?.data?.gender.toString())
+                putString(IntentExtras.EXTRA_AVATAR, inforUserResponse?.data?.avatar.toString())
+                putString(
+                    IntentExtras.EXTRA_INTRODUCE,
+                    inforUserResponse?.data?.introduce.toString()
+                )
+                putString(IntentExtras.EXTRA_ADDRESS, inforUserResponse?.data?.address.toString())
             }
 
             val updateInformationFragment = UpdateInformationFragment()
@@ -75,10 +82,9 @@ class MyProfileFragment : Fragment() {
                     binding.tvTitle1.visibility = View.GONE
                     binding.tvTitle2.visibility = View.GONE
 
-                    val sharedPreferences =
-                        requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
-                    val userId = sharedPreferences.getString("_id", "") ?: ""
-                    val userName = sharedPreferences.getString("username", "") ?: ""
+                    SharedPrefer.updateContext(requireContext())
+                    val userId = SharedPrefer.getUserId()
+                    val userName = SharedPrefer.getUserName()
                     myPostAdapter =
                         MyPostAdapter(requireActivity(), result.data.data, userName, userId)
                     binding.rvMyPost.layoutManager = LinearLayoutManager(
@@ -112,45 +118,31 @@ class MyProfileFragment : Fragment() {
         }
 
         binding.ivLogout.setOnClickListener {
-            val alertDialog = AlertDialog.Builder(requireContext(), android.R.style.Theme_Material_Dialog_Alert)
-                .setTitle("Đăng xuất")
-                .setMessage("Bạn có chắc chắn muốn đăng xuất tài khoản?")
-                .setPositiveButton("Đồng ý") { dialog, _ ->
-                    val sharedPreferences =
-                        requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
-                    sharedPreferences.edit().clear().apply()
-                    val intent = Intent(requireActivity(), SplashActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
-                    dialog.dismiss()
-                    parentFragmentManager.popBackStack()
-                }
-                .setNegativeButton("Hủy") { dialog, _ ->
-                    dialog.dismiss()
-                }
+            val alertDialog =
+                AlertDialog.Builder(requireContext(), android.R.style.Theme_Material_Dialog_Alert)
+                    .setTitle("Đăng xuất")
+                    .setMessage("Bạn có chắc chắn muốn đăng xuất tài khoản?")
+                    .setPositiveButton("Đồng ý") { dialog, _ ->
+                        // Clear dữ liệu
+                        SharedPrefer.getSharedPrefer().edit().clear().apply()
+                        val intent = Intent(requireActivity(), SplashActivity::class.java)
+                        intent.flags =
+                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        startActivity(intent)
+                        dialog.dismiss()
+                        parentFragmentManager.popBackStack()
+                    }
+                    .setNegativeButton("Hủy") { dialog, _ ->
+                        dialog.dismiss()
+                    }
             alertDialog.show()
         }
     }
 
-    private fun showConfirmationDialog(context: Context, message: String, onYes: () -> Unit) {
-        AlertDialog.Builder(context)
-            .setTitle("Đăng xuất")
-            .setMessage(message)
-            .setPositiveButton("Xác nhận") { dialog, _ ->
-                onYes()
-                dialog.dismiss()
-            }
-            .setNegativeButton("Hủy") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .show()
-    }
-
     override fun onResume() {
         super.onResume()
-        val sharedPreferences =
-            requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
-        val userName = sharedPreferences.getString("username", "").toString()
+        SharedPrefer.updateContext(requireContext())
+        val userName = SharedPrefer.getUserName()
         myProfileViewModel.getInforUser(userName)
         myProfileViewModel.getUserPosts(userName)
     }

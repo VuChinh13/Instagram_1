@@ -1,8 +1,6 @@
 package com.example.instagram.ui.component.home.adapter
 
 import android.content.Context
-import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -26,8 +24,6 @@ import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
-
-const val EXTRA_USER_NAME = "extra_user_name"
 
 class PostAdapter(
     private val posts: List<Post>,
@@ -90,14 +86,10 @@ class PostAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == VIEW_TYPE_NORMAL) {
-            val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_post, parent, false)
-            val binding = ItemPostBinding.bind(view)
+            val binding = ItemPostBinding.inflate(LayoutInflater.from(parent.context),parent,false)
             PostViewHolder(binding)
         } else { // VIEW_TYPE_HEADER
-            val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_first_post, parent, false)
-            val binding = ItemFirstPostBinding.bind(view)
+            val binding = ItemFirstPostBinding.inflate(LayoutInflater.from(parent.context),parent,false)
             FirstPostViewHolder(binding)
         }
     }

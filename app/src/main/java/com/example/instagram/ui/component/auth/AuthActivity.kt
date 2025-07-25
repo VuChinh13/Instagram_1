@@ -1,20 +1,16 @@
 package com.example.instagram.ui.component.auth
 
-import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
-import android.view.Gravity
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.example.instagram.R
 import com.example.instagram.databinding.ActivityAuthBinding
 import com.example.instagram.ui.component.main.MainActivity
 import com.example.instagram.ui.component.signup.SignupActivity
+import com.example.instagram.ui.component.utils.SharedPrefer
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -44,18 +40,17 @@ class AuthActivity : AppCompatActivity() {
             if (result != null) {
                 Toast.makeText(this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
                 // lưu thông tin đăng nhập vào trong SharedPreferences
-                val sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
-                val editor = sharedPreferences.edit()
-                editor.putString("_id", result.data._id)
-                editor.putString("username", result.data.username)
-                editor.putString("password", result.data.password)
-                editor.putString("name", result.data.name)
-                editor.putString("avatar", result.data.avatar)
-                editor.putString("gender", result.data.gender)
-                editor.putString("address", result.data.address)
-                editor.putString("introduce", result.data.introduce)
-                editor.apply()
-
+                SharedPrefer.updateContext(this)
+                SharedPrefer.saveAllData(
+                    result.data._id.toString(),
+                    result.data.username.toString(),
+                    result.data.password.toString(),
+                    result.data.name.toString(),
+                    result.data.avatar.toString(),
+                    result.data.gender.toString(),
+                    result.data.address.toString(),
+                    result.data.introduce.toString()
+                )
                 lifecycleScope.launch {
                     delay(1000)
                     startActivity(Intent(this@AuthActivity, MainActivity::class.java))

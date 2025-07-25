@@ -12,14 +12,15 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.instagram.R
 import com.example.instagram.ui.component.auth.AuthActivity
 import com.example.instagram.ui.component.main.MainActivity
+import com.example.instagram.ui.component.utils.SharedPrefer
 
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
         Handler(Looper.getMainLooper()).postDelayed({
-            val sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
-            if (sharedPreferences.all.isEmpty()) {
+            SharedPrefer.updateContext(this)
+            if (SharedPrefer.getSharedPrefer().all.isEmpty()) {
                 startActivity(Intent(this, AuthActivity::class.java))
                 finish()
             } else {

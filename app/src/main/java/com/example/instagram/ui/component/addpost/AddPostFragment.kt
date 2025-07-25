@@ -12,6 +12,8 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import com.example.instagram.databinding.FragmentAddPostBinding
+import com.example.instagram.ui.component.main.MainActivity
+import com.example.instagram.ui.component.utils.SharedPrefer
 import java.io.File
 import java.io.FileOutputStream
 
@@ -33,6 +35,9 @@ class AddPostFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        (activity as MainActivity).fragmentCurrent = "AddPostFragment"
+        (activity as MainActivity).countFragment++
+
         val pickMultipleMedia =
             registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(5)) { uris ->
                 if (uris.isNotEmpty()) {
@@ -48,25 +53,34 @@ class AddPostFragment : Fragment() {
         }
 
         binding.ivClose.setOnClickListener {
-           parentFragmentManager.popBackStack()
+            parentFragmentManager.popBackStack()
         }
 
         addPostViewModel.getPostResponse.observe(viewLifecycleOwner) { result ->
             if (result != null) {
                 // Nếu mà thành công
-                Toast.makeText(requireContext(), "Đã chia sẻ thành công bài viết", Toast.LENGTH_SHORT)
+                Toast.makeText(
+                    requireContext(),
+                    "Đã chia sẻ thành công bài viết",
+                    Toast.LENGTH_SHORT
+                )
                     .show()
                 parentFragmentManager.popBackStack()
-            } else Toast.makeText(requireContext(), "Đã có lỗi xảy ra hãy kiểm tra lại", Toast.LENGTH_SHORT)
+            } else Toast.makeText(
+                requireContext(),
+                "Đã có lỗi xảy ra hãy kiểm tra lại",
+                Toast.LENGTH_SHORT
+            )
                 .show()
         }
 
         binding.btShare.setOnClickListener {
             if (binding.etContent.text.isEmpty()) {
-                Toast.makeText(requireContext(), "Hãy nhập nội dung bài viết", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Hãy nhập nội dung bài viết", Toast.LENGTH_SHORT)
+                    .show()
             } else {
-                val sharedPreferences = requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
-                val userId = sharedPreferences.getString("_id", "") ?: ""
+                SharedPrefer.updateContext(requireContext())
+                val userId = SharedPrefer.getUserId()
                 addPostViewModel.addPost(userId, binding.etContent.text.toString(), postImages)
             }
         }

@@ -1,7 +1,6 @@
 package com.example.instagram.ui.component.profile.adapter
 
 import android.content.Context
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +13,7 @@ import com.bumptech.glide.Glide
 import com.example.instagram.R
 import com.example.instagram.data.model.Post
 import com.example.instagram.data.repository.AuthRepository
-import com.example.instagram.ui.component.home.adapter.EXTRA_USER_NAME
+import com.example.instagram.databinding.ItemPostBinding
 import com.example.instagram.ui.component.home.adapter.ImagePagerAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -34,20 +33,19 @@ class ProfileAdapter(
     private val authRepository = AuthRepository()
     private val adapterScope = CoroutineScope(Dispatchers.IO)
 
-    class ProfileViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val username: TextView = view.findViewById(R.id.tv_username)
-        val caption: TextView = view.findViewById(R.id.tv_content)
-        val viewPager: ViewPager2 = view.findViewById(R.id.viewPager)
-        val imageAvatar: ImageView = view.findViewById(R.id.iv_avatar)
-        val tvCreateAt: TextView = view.findViewById(R.id.tv_createAt)
-        val tvTotalLike: TextView = view.findViewById(R.id.tv_total_like)
-        val imageLike: ImageView = view.findViewById(R.id.iv_like)
+    class ProfileViewHolder(binding: ItemPostBinding) : RecyclerView.ViewHolder(binding.root) {
+        val username: TextView = binding.tvUsername
+        val caption: TextView = binding.tvContent
+        val viewPager: ViewPager2 = binding.viewPager
+        val imageAvatar: ImageView = binding.ivAvatar
+        val tvCreateAt: TextView = binding.tvCreateAt
+        val tvTotalLike: TextView = binding.tvTotalLike
+        val imageLike: ImageView = binding.ivLike
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProfileViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_post, parent, false)
-        return ProfileViewHolder(view)
+        val binding = ItemPostBinding.inflate(LayoutInflater.from(context),parent,false)
+        return ProfileViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ProfileViewHolder, position: Int) {

@@ -1,9 +1,5 @@
 package com.example.instagram.data.model
 
-import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
-
-
 data class PostResponse(
     val status: Boolean,
     val data: PostData

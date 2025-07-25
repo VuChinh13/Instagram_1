@@ -19,7 +19,7 @@ class MyProfileViewModel : ViewModel() {
     private val _getUserPostsResult = MutableLiveData<PostResponse?>()
     val getUserPostsResult: LiveData<PostResponse?> = _getUserPostsResult
 
-
+    // Lấy thông tin người dùng
     fun getInforUser(username: String) {
         viewModelScope.launch {
             val result = authRepository.getInforUser(username)
@@ -27,6 +27,7 @@ class MyProfileViewModel : ViewModel() {
         }
     }
 
+    // Lấy tất cả bài viết của người dùng
     fun getUserPosts(username: String) {
         viewModelScope.launch {
             val result = authRepository.getUserPosts(username)

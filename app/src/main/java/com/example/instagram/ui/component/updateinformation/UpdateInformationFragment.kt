@@ -3,7 +3,6 @@ package com.example.instagram.ui.component.updateinformation
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,15 +10,12 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.example.instagram.R
 import com.example.instagram.databinding.FragmentUpdateInformationBinding
-import com.example.instagram.ui.component.myprofile.EXTRA_ADDRESS
-import com.example.instagram.ui.component.myprofile.EXTRA_AVATAR
-import com.example.instagram.ui.component.myprofile.EXTRA_GENDER
-import com.example.instagram.ui.component.myprofile.EXTRA_INTRODUCE
-import com.example.instagram.ui.component.myprofile.EXTRA_NAME
+import com.example.instagram.ui.component.utils.IntentExtras
 import java.io.File
 import java.io.FileOutputStream
 
@@ -39,11 +35,11 @@ class UpdateInformationFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         arguments?.let {
-            name = it.getString(EXTRA_NAME)
-            gender = it.getString(EXTRA_GENDER)
-            avatar = it.getString(EXTRA_AVATAR)
-            introduce = it.getString(EXTRA_INTRODUCE)
-            address = it.getString(EXTRA_ADDRESS)
+            name = it.getString(IntentExtras.EXTRA_NAME)
+            gender = it.getString(IntentExtras.EXTRA_GENDER)
+            avatar = it.getString(IntentExtras.EXTRA_AVATAR)
+            introduce = it.getString(IntentExtras.EXTRA_INTRODUCE)
+            address = it.getString(IntentExtras.EXTRA_ADDRESS)
         }
 
         binding = FragmentUpdateInformationBinding.inflate(inflater, container, false)

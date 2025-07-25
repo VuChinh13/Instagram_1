@@ -3,19 +3,14 @@ package com.example.instagram.ui.component.updatepost
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
-import android.view.View
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.example.instagram.databinding.ActivityUpdatePostBinding
-import com.example.instagram.ui.component.myprofile.adapter.EXTRA_POST_CONTENT
-import com.example.instagram.ui.component.myprofile.adapter.EXTRA_POST_ID
-import com.example.instagram.ui.component.myprofile.adapter.EXTRA_POST_IMAGE
+import com.example.instagram.ui.component.utils.IntentExtras
 import java.io.File
 import java.io.FileOutputStream
 
@@ -25,17 +20,16 @@ class UpdatePostActivity : AppCompatActivity() {
     private val updatePostViewModel: UpdatePostViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         binding = ActivityUpdatePostBinding.inflate(layoutInflater)
         setContentView(binding.root)
         val images: ArrayList<String> =
-            intent.getStringArrayListExtra(EXTRA_POST_IMAGE) ?: arrayListOf()
-        val content: String = intent.getStringExtra(EXTRA_POST_CONTENT) ?: ""
-        val postId: String = intent.getStringExtra(EXTRA_POST_ID) ?: ""
+            intent.getStringArrayListExtra(IntentExtras.EXTRA_POST_IMAGE) ?: arrayListOf()
+        val content: String = intent.getStringExtra(IntentExtras.EXTRA_POST_CONTENT) ?: ""
+        val postId: String = intent.getStringExtra(IntentExtras.EXTRA_POST_ID) ?: ""
 
         binding.etContent.append(content)
 
-        if (images.isNotEmpty()){
+        if (images.isNotEmpty()) {
             Glide.with(this).load(images[0]).into(binding.ivPostImage)
         }
 
@@ -53,19 +47,25 @@ class UpdatePostActivity : AppCompatActivity() {
             pickMultipleMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
-        updatePostViewModel.getPostUpdateResponse.observe(this){ result->
-            if (result != null ){
-                Toast.makeText(this,"Cập nhật bài viết thành công",Toast.LENGTH_SHORT).show()
+        updatePostViewModel.getPostUpdateResponse.observe(this) { result ->
+            if (result != null) {
+                Toast.makeText(this, "Cập nhật bài viết thành công", Toast.LENGTH_SHORT).show()
                 finish()
-            } else Toast.makeText(this,"Đã xảy ra lỗi hãy kiểm tra lại",Toast.LENGTH_SHORT).show()
+            } else Toast.makeText(this, "Đã xảy ra lỗi hãy kiểm tra lại", Toast.LENGTH_SHORT).show()
         }
         binding.btSave.setOnClickListener {
             val sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
             val userId = sharedPreferences.getString("_id", "") ?: ""
-            updatePostViewModel.updatePost(userId,postId,postImages,binding.etContent.text.toString())
+            updatePostViewModel.updatePost(
+                userId,
+                postId,
+                postImages,
+                binding.etContent.text.toString()
+            )
         }
         binding.ivClose.setOnClickListener { finish() }
     }
+
     private fun uriToFile(context: Context, uri: Uri): File {
         val contentResolver = context.contentResolver
         val inputStream = contentResolver.openInputStream(uri)

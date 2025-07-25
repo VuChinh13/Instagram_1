@@ -18,32 +18,14 @@
         tools:targetApi="31">
         <activity
             android:name=".ui.component.main.MainActivity"
-            android:exported="true"/>
-        <activity
-            android:name=".ui.component.profile.ProfileActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.component.updatepost.UpdatePostActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.component.addpost.AddPostActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.component.updateinformation.UpdateInformationActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.component.myprofile.MyProfileActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.component.home.HomeActivity"
             android:exported="true" />
         <activity
             android:name=".ui.component.signup.SignupActivity"
             android:exported="false" />
         <activity
             android:name=".ui.component.splash.SplashActivity"
-            android:theme="@style/Theme.Instagram.NoSplash"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.Instagram.NoSplash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

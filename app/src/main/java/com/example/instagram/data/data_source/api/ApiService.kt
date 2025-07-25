@@ -75,7 +75,6 @@ interface ApiService {
     ): Response<DeletePostResponse>
 
 
-
     @PATCH("/api/v1/post")
     @Multipart
     suspend fun updatePost(

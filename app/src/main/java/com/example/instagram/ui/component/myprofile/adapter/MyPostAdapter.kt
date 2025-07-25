@@ -16,6 +16,7 @@ import com.example.instagram.R
 import com.example.instagram.data.model.Post
 import com.example.instagram.data.repository.AuthRepository
 import com.example.instagram.ui.component.updatepost.UpdatePostActivity
+import com.example.instagram.ui.component.utils.IntentExtras
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,9 +25,6 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-const val EXTRA_POST_CONTENT = "extra_post_content"
-const val EXTRA_POST_IMAGE = "extra_post_image"
-const val EXTRA_POST_ID = "extra_post_id"
 
 class MyPostAdapter(
     private val context: Context,
@@ -59,7 +57,7 @@ class MyPostAdapter(
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         var liked = false
         val post = posts[position]
-     
+
         holder.imageLike.setImageResource(R.drawable.ic_heart)
         post.listLike.forEach { userLike ->
             if (userLike.username == userName) {
@@ -77,14 +75,14 @@ class MyPostAdapter(
         holder.tvTotalLike.text = post.totalLike.toString()
 
         holder.imageLike.setOnClickListener {
-        
+
             if (liked) {
-        
+
                 adapterScope.launch {
                     val result = authRepository.likePost(userId, post._id, -1)
                     withContext(Dispatchers.Main) {
                         if (result != null) {
-                            liked = !liked 
+                            liked = !liked
                             holder.imageLike.setImageResource(R.drawable.ic_heart)
                             post.totalLike -= 1
                             holder.tvTotalLike.text = post.totalLike.toString()
@@ -99,7 +97,7 @@ class MyPostAdapter(
                     val result = authRepository.likePost(userId, post._id, 1)
                     withContext(Dispatchers.Main) {
                         if (result != null) {
-                            liked = !liked 
+                            liked = !liked
                             holder.imageLike.setImageResource(R.drawable.ic_heart_red)
                             post.totalLike += 1
                             holder.tvTotalLike.text = post.totalLike.toString()
@@ -112,7 +110,7 @@ class MyPostAdapter(
             }
         }
 
-    
+
         if (holder.toolbar.menu.size() == 0) {
             holder.toolbar.inflateMenu(R.menu.menu_item)
         }
@@ -135,7 +133,7 @@ class MyPostAdapter(
                                     Toast.LENGTH_SHORT
                                 )
                                     .show()
-                               
+
                                 posts.removeAt(position)
                                 notifyItemRemoved(position)
                                 notifyItemRangeChanged(position, posts.size)
@@ -150,11 +148,14 @@ class MyPostAdapter(
                 }
 
                 R.id.menu_edit_post -> {
-                   
+
                     val intent = Intent(context, UpdatePostActivity::class.java).apply {
-                        putStringArrayListExtra(EXTRA_POST_IMAGE, ArrayList(posts[position].images))
-                        putExtra(EXTRA_POST_CONTENT, posts[position].content)
-                        putExtra(EXTRA_POST_ID, posts[position]._id)
+                        putStringArrayListExtra(
+                            IntentExtras.EXTRA_POST_IMAGE,
+                            ArrayList(posts[position].images)
+                        )
+                        putExtra(IntentExtras.EXTRA_POST_CONTENT, posts[position].content)
+                        putExtra(IntentExtras.EXTRA_POST_ID, posts[position]._id)
                     }
                     context.startActivity(intent)
                     true
